@@ -15,7 +15,7 @@ public class HomePageTest extends BaseTest {
     @Test(dataProvider = "getDataFromExcel", dataProviderClass = SupplierReader.class)
     @TestDescription(description = "To test whether admin is able to suspend a user", author = Author.CHINMAY, category = Category.SMOKE)
     public void testSuspendUser(TestDataSupplier dataSupplier) {
-        int expectedUser = new LoginPage()
+        int expectedUser = LoginPage.getInstance()
                 .clickHomeLogin("Login")
                 .setUsername(dataSupplier.getUsername())
                 .setPassword(dataSupplier.getPassword())

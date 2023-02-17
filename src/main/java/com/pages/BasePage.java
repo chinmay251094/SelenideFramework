@@ -14,9 +14,12 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
+import static com.codeborne.selenide.Selectors.byText;
+import static com.codeborne.selenide.Selectors.withText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 import static com.reports.ReportsLogger.pass;
+import static org.openqa.selenium.By.xpath;
 
 public class BasePage {
     private static SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy_HH'h'mm'm'ss's'");
@@ -39,6 +42,12 @@ public class BasePage {
         pass(value + " has been clicked.");
     }
 
+    protected static void click(By by, String element, String value) {
+        highlightElement($(by));
+        $(byText(element)).click();
+        pass(value + " has been clicked.");
+    }
+
     protected static void click(SelenideElement element, Condition wait, String value) {
         highlightElement(element);
         element.shouldBe(wait).clear();
@@ -53,9 +62,11 @@ public class BasePage {
         pass(value + " has been set in text-box");
     }
 
-    protected static SelenideElement generateDynamicElement(String str, String value) {
-        String xpath = String.format(str, value);
-        return $(By.xpath(xpath));
+    protected static void sendKeys(By by, String element, String value) {
+        highlightElement($(by));
+        $(by).clear();
+        $(byText(element)).shouldBe(Condition.visible).sendKeys(value);
+        pass(value + " has been set in text-box");
     }
 
     protected static SelenideElement getElement(By by) {
@@ -83,6 +94,21 @@ public class BasePage {
         return $(withTagAndText(tagName, text));
     }
 
+    protected static void clickDesiredElement(By by, String item) {
+        ElementsCollection elements = $$(by);
+
+        for (SelenideElement element : elements) {
+            if (element.getText().equals(item)) {
+                element.click();
+                break;
+            }
+        }
+    }
+
+    protected static SelenideElement generateDynamicSelenideElement(String xpath, String value) {
+        return $(xpath(String.format(xpath, value)));
+    }
+
     public static void takeScreenshot(String testcase) {
         TakesScreenshot ts = (TakesScreenshot) WebDriverRunner.getWebDriver();
         File source = ts.getScreenshotAs(OutputType.FILE);
@@ -98,7 +124,6 @@ public class BasePage {
 
         try {
             FileHandler.copy(source, destination);
-            System.out.println("Screenshot saved to file: " + screenshotFilePath);
         } catch (IOException e) {
             System.out.println("Failed to take screenshot: " + e.getMessage());
         }

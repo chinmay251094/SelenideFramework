@@ -56,7 +56,7 @@ public class HomePage extends BasePage {
         ElementsCollection team = $$(LIST_OF_TEAM_MEMBERS);
 
         for (SelenideElement t : team) {
-            if (t.find(LINK_TEAM_MEMBER).getText().equals(username) && generateDynamicElement(userStatus, status).getText().contains(status)) {
+            if (t.find(LINK_TEAM_MEMBER).getText().equals(username) && generateDynamicSelenideElement(userStatus, status).getText().contains(status)) {
                 flag = 1;
                 break;
             }
